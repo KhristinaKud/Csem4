@@ -2,18 +2,26 @@
 #include <time.h>
 #include <limits.h>
 
+// Основна функція
 int main() {
-    //максимальне значення часу
-    time_t max_32bit = INT_MAX;
-    time_t max_64bit = LLONG_MAX;
+    // Оголошення змінної для зберігання максимального значення time_t
+    time_t max_time;
 
-    //виведення Для 32-ї системи
-    printf("Maximum time for 32-bit time_t: %ld seconds\n", max_32bit);
-    printf("End date (32-bit): %s", ctime(&max_32bit));
+    // Визначення максимального значення time_t залежно від архітектури
+#if (INT_MAX == 2147483647) // 32-бітний time_t
+    max_time = (time_t)INT_MAX;
+#else // 64-бітний time_t
+    max_time = (time_t)LLONG_MAX;
+#endif
 
-    //виведення Для 64-ї системи
-    printf("Maximum time for 64-bit time_t: %lld seconds\n", max_64bit);
-    printf("End date (64-bit): %s", ctime(&max_64bit));
+    // Конвертація максимального значення time_t у структуру часу
+    struct tm *tm_info = localtime(&max_time);
+    if (tm_info) { // Якщо конвертація успішна
+        printf("Maximum representable time: %s", asctime(tm_info)); // Виведення дати
+    }
+    else { // Якщо конвертація не вдалася
+        printf("Time conversion failed, value might be too large\n");
+    }
 
-    return 0;
+    return 0; // Повернення нуля для успішного завершення програми
 }
