@@ -195,6 +195,39 @@ text  data  bss  dec  hex  filename
 
 ---
 - Скомпільована програма
+## [Код](Pr231.c)
   ```text
-  
+ kristi @host:~/pr $/Pr231 
+The stack top is near 0x821207c3c
   ```
+- Знаходження розташування сегментів
+## [Код](Pr232.c)
+Результат компіляції
+ ```text
+kristi @host:~/pr $/Pr232 
+Function address (text segment): 0x400612 
+data segment: 0x401a48 
+bss segment: 0x401a5c 
+Heap allocation: 0x784c3808008 
+Stack allocation: 0x820d391d4
+ ```
+- Збільшення розміру стека
+  # [Код](Pr233.c)
+  Результат компіляції
+```text
+kristi @host:~/pr $/Pr233 
+Initial stack top: 0x820be148c 
+Stack top inside function (arrayl): : 0x820be04d0 
+Stack top inside function (array2): 0x820bdf530 
+  ```
+## Висновки: У коді з дослідженням різних сегментів пам'яті, можемо побачити як пам'ять використовується різними сегментами. У коді зі збільшенням розміру стека, бачимо що стек спускається(зростає) вниз, тому адреса зменшується
+
+
+
+
+
+
+
+
+  
+
