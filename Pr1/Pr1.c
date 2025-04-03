@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <string.h>
 
 int replace(char *str, char replacement) {
     int count = 0;
@@ -13,7 +13,8 @@ int replace(char *str, char replacement) {
 }
 
 int main() {
-    char str[] = "The cat sat";
+    char str[20];
+    strcpy(str, "The cat sat");
     char replacement = '-';
     int count = replace(str, replacement);
     printf("Result: \"%s\", Number of replacements: %d\n", str, count);
