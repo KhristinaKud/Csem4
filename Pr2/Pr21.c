@@ -11,7 +11,7 @@ int main() {
     // Відображення часу у форматі
     struct tm *max_time_tm = gmtime(&max_time);
     if (max_time_tm) {
-        printf("Time? when time_t finished: %s", asctime(max_time_tm));
+        printf("Time when time_t finished: %s", asctime(max_time_tm));
     } else {
         printf("Error.\n");
     }
