@@ -244,6 +244,41 @@ In function             bar_is_now_closed; &local va ar = 0x820b0c16c
 Now blocking on pause()...
 ```
 
+risti@host:~/pr $ procstat -k $(pgrep Pr24)
+usage: procstat [--libxo] [-h] [-M core] [-N system] [-w interval] command
+                [pid ... | core ...]
+       procstat [--libxo] -a [-h] [-M core] [-N system]  [-w interval] command
+       procstat [--libxo] [-h] [-M core] [-N system] [-w interval]
+                [-S | -b | -c | -e | -f [-C] | -i [-n] | -j [-n] | -k [-k] |
+                 -l | -r [-H] | -s | -t | -v | -x] [pid ... | core ...]
+       procstat [--libxo] -a [-h] [-M core] [-N system] [-w interval]
+                [-S | -b | -c | -e | -f [-C] | -i [-n] | -j [-n] | -k [-k] |
+                 -l | -r [-H] | -s | -t | -v | -x]
+       procstat [--libxo] -L [-h] [-M core] [-N system] core ...
+Available commands:
+       advlock(s)
+       argument(s)
+       auxv
+       basic
+       binary
+       [cpuset | cs]
+       credential(s)
+       environment
+       [fd(s) | file(s)] [-C]
+       kstack [-v]
+       pargs
+       penv
+       ptlwpinfo
+       pwdx
+       rlimit
+       rusage [-Ht]
+       sigfastblock
+       signal(s) [-n]
+       thread(s)
+       tsignal(s) [-n]
+       vm
+kristi@host:~/pr $ 
+
 
 
 
