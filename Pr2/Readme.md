@@ -193,6 +193,7 @@ text  data  bss  dec  hex  filename
 ---
 - Скомпільована програма
 ## [Код](Pr231.c)
+Результат компіляції
   ```text
  kristi @host:~/pr $/Pr231 
 The stack top is near 0x821207c3c
@@ -209,8 +210,8 @@ Heap allocation: 0x784c3808008
 Stack allocation: 0x820d391d4
  ```
 - Збільшення розміру стека
-  # [Код](Pr233.c)
-  Результат компіляції
+## [Код](Pr233.c)
+Результат компіляції
 ```text
 kristi @host:~/pr $/Pr233 
 Initial stack top: 0x820be148c 
