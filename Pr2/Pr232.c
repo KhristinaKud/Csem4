@@ -1,33 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//  .data
-int global_data = 42;
-
-//  .bss
-int global_bss;
-
-void sample_function() {
-    printf("This is a function in .text\n");
-}
+int data = 5;
+int bss;
 
 int main() {
-    // Локальна змінна на стеку
-    int stack_var;
-
+    int stack;
     // Змінна на купі (heap)
-    int *heap_var = malloc(sizeof(int));
-    *heap_var = 10;
-
+    int *heap = malloc(sizeof(int));
     // Виведення адрес
-    printf("Stack top (stack_var) is near: %p\n", &stack_var);
-    printf("Global initialized (data segment): %p\n", &global_data);
-    printf("Global uninitialized (bss segment): %p\n", &global_bss);
-    printf("Function (text segment): %p\n", sample_function);
-    printf("Heap variable: %p\n", heap_var);
+    printf ("Text segment : %p\n", (void*)main());
+    printf ("Initialized data segmant: %p\n", (void*)&data);
+    printf ("BSS segmant: %p\n", (void*)&bss);
+    printf ("Heap segment: %p\n", (void*)heap);
+    printf ("Stack segment: %p\n", (void*) &stack);
 
     // Звільнення пам’яті
-    free(heap_var);
+    free(heap);
 
     return 0;
 }
