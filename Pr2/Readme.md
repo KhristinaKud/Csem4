@@ -195,6 +195,80 @@ text  data  bss  dec  hex  filename
 
 ---
 - Скомпільована програма
+## [Код](Pr231.c)
   ```text
-  
+ kristi @host:~/pr $/Pr231 
+The stack top is near 0x821207c3c
   ```
+- Знаходження розташування сегментів
+## [Код](Pr232.c)
+Результат компіляції
+ ```text
+kristi @host:~/pr $/Pr232 
+Function address (text segment): 0x400612 
+data segment: 0x401a48 
+bss segment: 0x401a5c 
+Heap allocation: 0x784c3808008 
+Stack allocation: 0x820d391d4
+ ```
+- Збільшення розміру стека
+  # [Код](Pr233.c)
+  Результат компіляції
+```text
+kristi @host:~/pr $/Pr233 
+Initial stack top: 0x820be148c 
+Stack top inside function (arrayl): : 0x820be04d0 
+Stack top inside function (array2): 0x820bdf530 
+  ```
+## Висновки: У коді з дослідженням різних сегментів пам'яті, можемо побачити як пам'ять використовується різними сегментами. У коді зі збільшенням розміру стека, бачимо що стек спускається(зростає) вниз, тому адреса зменшується
+---
+# Завдання 2.4
+Ваше завдання – дослідити стек процесу або пригадати, як це робиться. Ви можете:
+
+● Автоматично за допомогою утиліти gstack.
+
+● Вручну за допомогою налагоджувача GDB.
+  # [Код](Pr24.c)
+## Компіляція 
+  ```bash
+gcc -o Pr24 Pr24.c
+  ```
+## Результат програми 
+```text
+kristi@host:~/pr $ gcc-0 Pr24 Pr24.c 
+kristi@host:~/pr $/Pr 24 
+In function                            main; &local var = 0x820b0c1dc 
+In function                           foo; &local va ar = 0x820b0clac 
+In function                           bar; &local va ar = 0x820b0c18c 
+In function             bar_is_now_closed; &local va ar = 0x820b0c16c 
+Now blocking on pause()...
+kristi @host:~/pr $ ps aux | grep [P]r24 0.0 0.2 
+kristi 1258 0.0 0.2 12700 1736 0 | 00:38 0:00.00 /Pr24 
+```
+- bstack
+```text
+kristi@host:~/pr $ bstack 1258
+Thread 1 (LWP 100547 of process 1258): 
+#0 0x0000000823de76aa in sigsuspend () from /lib/libc.so.7 
+#1 0x0000000823d5da65 in pause() from /lib/libc.so.7 
+#2 0x000000000040068b in bar_is_now_closed () at Pr24.c: 11 
+#3 0x00000000004006bd in bar () at Pr24.c: 17 
+#4 0x00000000004006ef in foo ( ) at Pr24.c: 23 
+#5 0x0000000000400728 in main (argc=1, argv=0x820fcfd08) at Pr24.c:29 
+```
+-GDB
+```text
+(gdb) backtrace 
+#0 0x0000000823de76aa in _sigsuspend () from /lib/libc.so.7 
+#1 0x000000 823 d5da65 in pause() from /lib/libc.so.7 
+#2 0x0 0 0 0 0 0 0 0 0 0 4 0 0 68b in bar_is_now_closed () at Pr24.c: 11 
+#3 0x00000000004006bd in bar () at Pr24.c: 17 
+#4 0x00000000004006ef in foo() at Pr24.c:23 
+#5 0x0000000000400728 in main (argc=1, argv=0x820fcfd08) at Pr24.c:29 
+(gdb)
+```
+
+
+
+  
+
