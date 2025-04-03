@@ -64,11 +64,108 @@ text data bss dec hex filename
 
 ● на розмір файлу a.out впливає компіляція для налагодження, але не сегменти.
 
-## 1) Запустимо умову 1 
+---
+## Умова 1
 ## [Код](Pr221.c)
---- 
 ## Компіляція 
-
+- Компіляція програми
+```bash
+Kristi @host:~/pr $ gcc - Wall Pr221.C -o Pr221 
+Kristi @host:~/pr $/Pr221 
+```
+- запушення ls -l для виконуваного файлу
+  ```bash
+  Kristi @host:~/pr $ Is l Pr221 
+  ```
+- запущення size
+    ```bash
+  Kristi @host:~/pr $ size Pr221 
+  ```
+## Результати Компіляції
+```text
+ Hello world!
+- rwxr - xr - x 1 kristi kristi 8192 Apr 3 19:02 Pr221
+text  data  bss  dec  hex  filename
+1078  552  16  1646  66e  Pr221  
+```
+## Умова 2
+## [Код](Pr222.c)
+## Компіляція 
+- Компіляція програми
+```bash
+Kristi @host:~/pr $ gcc - Wall Pr222.C -o Pr222
+Kristi @host:~/pr $/Pr222
+```
+- запушення ls -l для виконуваного файлу
+  ```bash
+  Kristi @host:~/pr $ Is l Pr222
+  ```
+- запущення size
+    ```bash
+  Kristi @host:~/pr $ size Pr222 
+  ```
+## Результати Компіляції
+```text
+ Hello world!
+- rwxr - xr - x 1 kristi kristi 8224 Apr 3 19:15 Pr222
+text  data  bss  dec  hex  filename
+1078  552  4032  5562  161e  Pr222
+```
+## Пояснення
+Сегмент bbs збільшився на 4000 байт, тому що додавання глобального масиву до програми значно збільшує сегмент bss, оскільки масив займає пам'ять, яка виділяється для змінних.Кожен елемент займає 4байти.
+## Умова 3
+## [Код](Pr223.c)
+## Компіляція 
+- Компіляція програми
+```bash
+Kristi @host:~/pr $ gcc - Wall Pr223.C -o Pr223
+Kristi @host:~/pr $/Pr223
+```
+- запушення ls -l для виконуваного файлу
+  ```bash
+  Kristi @host:~/pr $ Is l Pr223
+  ```
+- запущення size
+    ```bash
+  Kristi @host:~/pr $ size Pr223 
+  ```
+## Результати Компіляції
+```text
+ Hello world!
+- rwxr - xr - x 1 kristi kristi 8224 Apr 3 19:28 Pr223
+text  data  bss  dec  hex  filename
+1078  4568  16  5562  161e  Pr222
+```
+---
+## Пояснення
+Сегмент bbs має початкове значення, а сегмент data збылішилась на 4016 байт. Тобто масив з ініціалізацією перемістився з сигмента bss в сигмент data, що впливає на size файла.
+## Умова 4
+## [Код](Pr224.c)
+## Компіляція 
+- Компіляція програми
+```bash
+Kristi @host:~/pr $ gcc - Wall Pr224.C -o Pr224
+Kristi @host:~/pr $/Pr223
+```
+- запушення ls -l для виконуваного файлу
+  ```bash
+  Kristi @host:~/pr $ Is l Pr224
+  ```
+- запущення size
+    ```bash
+  Kristi @host:~/pr $ size Pr224
+  ```
+## Результати Компіляції
+```text
+ Hello world!
+- rwxr - xr - x 1 kristi kristi 8224 Apr 3 19:35 Pr224
+text  data  bss  dec  hex  filename
+1078  4568  16  5562  161e  Pr222
+```
+---
+## Пояснення
+Сегмент bbs має початкове значення, а сегмент data збылішилась на 4016 байт. Тобто масив з ініціалізацією перемістився з сигмента bss в сигмент data, що впливає на size файла.
+ 
 
 
  
