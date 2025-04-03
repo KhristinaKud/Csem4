@@ -242,43 +242,31 @@ In function                           foo; &local va ar = 0x820b0clac
 In function                           bar; &local va ar = 0x820b0c18c 
 In function             bar_is_now_closed; &local va ar = 0x820b0c16c 
 Now blocking on pause()...
+kristi @host:~/pr $ ps aux | grep [P]r24 0.0 0.2 
+kristi 1258 0.0 0.2 12700 1736 0 | 00:38 0:00.00 /Pr24 
 ```
-
-risti@host:~/pr $ procstat -k $(pgrep Pr24)
-usage: procstat [--libxo] [-h] [-M core] [-N system] [-w interval] command
-                [pid ... | core ...]
-       procstat [--libxo] -a [-h] [-M core] [-N system]  [-w interval] command
-       procstat [--libxo] [-h] [-M core] [-N system] [-w interval]
-                [-S | -b | -c | -e | -f [-C] | -i [-n] | -j [-n] | -k [-k] |
-                 -l | -r [-H] | -s | -t | -v | -x] [pid ... | core ...]
-       procstat [--libxo] -a [-h] [-M core] [-N system] [-w interval]
-                [-S | -b | -c | -e | -f [-C] | -i [-n] | -j [-n] | -k [-k] |
-                 -l | -r [-H] | -s | -t | -v | -x]
-       procstat [--libxo] -L [-h] [-M core] [-N system] core ...
-Available commands:
-       advlock(s)
-       argument(s)
-       auxv
-       basic
-       binary
-       [cpuset | cs]
-       credential(s)
-       environment
-       [fd(s) | file(s)] [-C]
-       kstack [-v]
-       pargs
-       penv
-       ptlwpinfo
-       pwdx
-       rlimit
-       rusage [-Ht]
-       sigfastblock
-       signal(s) [-n]
-       thread(s)
-       tsignal(s) [-n]
-       vm
-kristi@host:~/pr $ 
-
+- bstack
+```text
+kristi@host:~/pr $ bstack 1258
+Thread 1 (LWP 100547 of process 1258): 
+#0 0x0000000823de76aa in sigsuspend () from /lib/libc.so.7 
+#1 0x0000000823d5da65 in pause() from /lib/libc.so.7 
+#2 0x000000000040068b in bar_is_now_closed () at Pr24.c: 11 
+#3 0x00000000004006bd in bar () at Pr24.c: 17 
+#4 0x00000000004006ef in foo ( ) at Pr24.c: 23 
+#5 0x0000000000400728 in main (argc=1, argv=0x820fcfd08) at Pr24.c:29 
+```
+-GDB
+```text
+(gdb) backtrace 
+#0 0x0000000823de76aa in _sigsuspend () from /lib/libc.so.7 
+#1 0x000000 823 d5da65 in pause() from /lib/libc.so.7 
+#2 0x0 0 0 0 0 0 0 0 0 0 4 0 0 68b in bar_is_now_closed () at Pr24.c: 11 
+#3 0x00000000004006bd in bar () at Pr24.c: 17 
+#4 0x00000000004006ef in foo() at Pr24.c:23 
+#5 0x0000000000400728 in main (argc=1, argv=0x820fcfd08) at Pr24.c:29 
+(gdb)
+```
 
 
 
