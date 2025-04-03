@@ -1,22 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int data = 5;
+
+int data = 10;
 int bss;
 
+void text_segment() {
+    printf("Function address (text segment): %p\n", text_segment);
+}
 int main() {
     int stack;
-    // Змінна на купі (heap)
     int *heap = malloc(sizeof(int));
-    // Виведення адрес
-    printf ("Text segment : %p\n", (void*)main());
-    printf ("Initialized data segmant: %p\n", (void*)&data);
-    printf ("BSS segmant: %p\n", (void*)&bss);
-    printf ("Heap segment: %p\n", (void*)heap);
-    printf ("Stack segment: %p\n", (void*) &stack);
-
-    // Звільнення пам’яті
+    text_segment();
+    printf("data segment: %p\n", &data);
+    printf("bss segment: %p\n", &bss);
+    printf("Heap allocation: %p\n", heap);
+    printf("Stack allocation: %p\n", &stack);
     free(heap);
+
 
     return 0;
 }
