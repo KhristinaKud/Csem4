@@ -221,10 +221,28 @@ Stack top inside function (arrayl): : 0x820be04d0
 Stack top inside function (array2): 0x820bdf530 
   ```
 ## Висновки: У коді з дослідженням різних сегментів пам'яті, можемо побачити як пам'ять використовується різними сегментами. У коді зі збільшенням розміру стека, бачимо що стек спускається(зростає) вниз, тому адреса зменшується
+---
+# Завдання 2.4
+Ваше завдання – дослідити стек процесу або пригадати, як це робиться. Ви можете:
 
+● Автоматично за допомогою утиліти gstack.
 
-
-
+● Вручну за допомогою налагоджувача GDB.
+  # [Код](Pr24.c)
+## Компіляція 
+  ```bash
+gcc -o Pr24 Pr24.c
+  ```
+## Результат програми 
+```text
+kristi@host:~/pr $ gcc-0 Pr24 Pr24.c 
+kristi@host:~/pr $/Pr 24 
+In function                            main; &local var = 0x820b0c1dc 
+In function                           foo; &local va ar = 0x820b0clac 
+In function                           bar; &local va ar = 0x820b0c18c 
+In function             bar_is_now_closed; &local va ar = 0x820b0c16c 
+Now blocking on pause()...
+```
 
 
 
