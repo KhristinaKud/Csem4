@@ -12,7 +12,7 @@ int main() {
         free(ptr);
     }
 
-    int xa = LONG_MAX;
+    long xa = LONG_MAX;
     printf("xa = %ld\n", xa);
     int xb = 2;
     int num = xa * xb;
