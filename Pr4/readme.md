@@ -34,9 +34,36 @@ malloc failed
 ```text
 kristi @host:~/pr/Pr4 $ ./Pr42
 malloc cannot allocate memory for a negative size 
-xa = 2147483647 
+xa = 9223372036854775807 
 num = - 2 
 malloc failed 
+```
+## Пояснення
+ - Що станеться, якщо передати malloc(3) від’ємний аргумент?
+  За результатами компіляціїможемо побачити, якщо ми передамо від'ємний аргумент, то функція не виділить пам'ять і поверне NULL, тому що malloc(3) очікує беззнаковий аргумент
+- Що буде, якщо num оголошене як цілочисельна змінна зі знаком, а результат множення призведе до переповнення? Як себе поведе malloc(3)?
+  За результатами компіляції можемо побачити, що при множенні 2 - х чисел, виникає переповнення і програма виводить від'ємне число, це означає, що недостатньо пам'яті і у результаті виникає помилка.
+
+# Завдання 4.3
+## Опис програми 
+Що станеться, якщо використати malloc(0)? Напишіть тестовий випадок, у якому malloc(3) повертає NULL або вказівник, що не є NULL, і який можна передати у free(). Відкомпілюйте та запустіть через ltrace. Поясніть поведінку програми.
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr43.c -o Pr43 
+kristi @host:~/pr/Pr4 $./Pr43
+kristi @host:~/pr/Pr4 $ltrace ./Pr43
+```
+## Результат компіляції
+```text
+malloc(0) return a pointer: 0x57a0ce08008
+Couldn't determi ne base address of [vdso] 
+Couldn't load ELF object [vdso]: No such file or directory 
+libc_start1(1, 0x8211e4db0, 0x8211e4dc0, 0x18363da17a20, 0x400652 <unfinied...> 
+malloc(0)                                     = 0x3df 984208008 
+printf("malloc(0) return a pointer: %p\n", 0x3df984208008malloc(0) return pointer: 0x3df 984208008 
+)= 43 
+free (0x3df984208008)             = <void>
++++ exited (status 0) +++ 
 ```
 ## Пояснення
 
