@@ -12,4 +12,32 @@
 # Завдання 4.2 
  ## Опис програми 
  Що станеться, якщо передати malloc(3) від’ємний аргумент? Напишіть тестовий випадок, який обчислює кількість виділених байтів за формулою num = xa * xb. Що буде, якщо num оголошене як цілочисельна змінна зі знаком, а результат множення призведе до переповнення? Як себе поведе malloc(3)? Запустіть програму на x86_64 і x86.
+## Компіляція 
+ - на x86_64
+```bash
+kristi @host:~/pr/Pr4 $ gcc -m32 WalI Pr42.c -o Pr42
+```
+- x86
+```bash
+kristi @host:~/pr/Pr4 $ gcc -m64 WalI Pr42.c -o Pr42
+```
+## Результат компіляції
+- на x86_64
+```text
+kristi @host:~/pr/Pr4 $ ./Pr42
+malloc cannot allocate memory for a negative size 
+xa = 2147483647 
+num = - 2 
+malloc failed 
+```
+- x86
+```text
+kristi @host:~/pr/Pr4 $ ./Pr42
+malloc cannot allocate memory for a negative size 
+xa = 2147483647 
+num = - 2 
+malloc failed 
+```
+## Пояснення
+
 
