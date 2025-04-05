@@ -12,6 +12,7 @@ int main() {
         strcpy(ptr, "mam"); // Записуємо рядок у пам’ять
         printf("Value before free: %s\n", (char*)ptr);
         free(ptr);
+        printf("Value after free: %s\n", (char*)ptr);
         i++;
     }
     return 0;
