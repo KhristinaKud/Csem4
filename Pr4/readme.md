@@ -140,4 +140,37 @@ ptr2 return: 0x2190d008008
 ```
 ## Пояснення 
 Якщо realloc(3) викликати з NULL, то він працює так само, як malloc().Якщо realloc(3) викликати з розміром 0, то він працюєє так само, як free().Тобто realloc(3) з NULL, створює новий блок пам'яті,realloc(3) з розміром 0, звільняє пам'ять, на яку вказує ptr2.
+# Завдання 4.7
+## Опис програми
+Перепишіть наступний код, використовуючи reallocarray(3):
+```text
+struct sbar *ptr, *newptr;
+ptr = calloc(1000, sizeof(struct sbar));
+newptr = realloc(ptr, 500*sizeof(struct sbar));
+```
+Порівняйте результати виконання з використанням ltrace.
 
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr47.c -o Pr47
+kristi @host:~/pr/Pr4 $./Pr47
+kristi @host:~/pr/Pr4 $ ltrace ./Pr47
+```
+## Результати компіляції 
+```text
+Allocated memory at 0x1397e6e09000 
+Real located with reallocarray to 0x1397e6e13000
+```
+-ltrace
+```text
+Couldn't load ELF object [vdso]: No such file or directory 
+libc start1(1, 0x82117f2d0, 0x82117f2e0, 0x329a1ab80a20, 0x4006c2 <unfinished > 
+calloc(1000, 4) 
+= 0x394eef e09000 
+printf("Allocated memory at %p\n", 0x394eef e09000Allocated memory at 0x394eef e09000) = 35 
+reallocarray (0x394eef e09000, 500, 4, 0x228a2ce812b8233c, 0x8222f54f8) = 0x394eefe13000 
+printf("Real located with reallocarray to". Reallocated with reallocarray to 0x394eefe13000) = 48 
+free (0x394eef e13000)                                = <void>
++++ exited (status 0) +++ 
+```
+## Пояснення 
