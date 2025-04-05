@@ -89,16 +89,16 @@ kristi @host:~/pr/Pr4 $./Pr442
 ```
 ## Результат компіляції 
 - Для програми з проблемою вибило попередження, але вона скомпілювалась 
-  ```text
+```text
   Pr441.c:15:9: warning: pointer 'ptr' used after 'free' [-Wuse-after-free] 
-  ```
-  ```text
+```
+```text
 Value before free: mam 
 Value after free: mam 
 ptr = 0x61cb6609000 
 Value before free: mam 
 Value after free: mam 
-  ```
+```
 - Правильний код програми
 ```text
 ptr = 0x61cb6609000 
@@ -109,3 +109,68 @@ Value before free: mam
 ## Пояснення 
 У програмі з проблемою, компілятор буде вибивати попередження use-after-free, тобто використання пам'яті після її звільнення. І по хорошому програма, мала не компілюватись. Але компілятор вважає це тільки попередженням. 
 У правильному коді, ми вже після виклику free(), вказівнику ptr встановлюємо Null, щоб програма не робила повторне використання звільненої пам'яті 
+# Завдання 4.5
+## Опис програми
+Що станеться, якщо realloc(3) не зможе виділити пам’ять? Напишіть тестовий випадок, що демонструє цей сценарій.
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr45.c -o Pr45
+kristi @host:~/pr/Pr4 $./Pr45
+```
+## Результати компіляції 
+```text
+malloc: Oxcae8ea09000 
+Original pointer still valid at 0xcae8ea09000 
+```
+## Пояснення 
+Компілятор видає попередження(Walloc-size-larger-than),а не помилку тому що, аргумент (size_t)-1 перевищує максимальний допустимий розмір пам’яті. Функція realloc повертає NULL, коли їй не вдається виділити запитуваний об'єм пам'яті. Вказівник ptr, залишається незмінним і пам’ять, яка була виділена під час початкового виклику malloc(), все ще є дійсною .
+
+# Завдання 4.6
+## Опис програми
+Якщо realloc(3) викликати з NULL або розміром 0, що станеться? Напишіть тестовий випадок.
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr46.c -o Pr46
+kristi @host:~/pr/Pr4 $./Pr46
+```
+## Результати компіляції 
+```text
+ptr1 return: 0x2c190d008008 
+ptr2 return: 0x2190d008008 
+```
+## Пояснення 
+Якщо realloc(3) викликати з NULL, то він працює так само, як malloc().Якщо realloc(3) викликати з розміром 0, то він працюєє так само, як free().Тобто realloc(3) з NULL, створює новий блок пам'яті,realloc(3) з розміром 0, звільняє пам'ять, на яку вказує ptr2.
+# Завдання 4.7
+## Опис програми
+Перепишіть наступний код, використовуючи reallocarray(3):
+```text
+struct sbar *ptr, *newptr;
+ptr = calloc(1000, sizeof(struct sbar));
+newptr = realloc(ptr, 500*sizeof(struct sbar));
+```
+Порівняйте результати виконання з використанням ltrace.
+
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr47.c -o Pr47
+kristi @host:~/pr/Pr4 $./Pr47
+kristi @host:~/pr/Pr4 $ ltrace ./Pr47
+```
+## Результати компіляції 
+```text
+Allocated memory at 0x1397e6e09000 
+Real located with reallocarray to 0x1397e6e13000
+```
+-ltrace
+```text
+Couldn't load ELF object [vdso]: No such file or directory 
+libc start1(1, 0x82117f2d0, 0x82117f2e0, 0x329a1ab80a20, 0x4006c2 <unfinished > 
+calloc(1000, 4) 
+= 0x394eef e09000 
+printf("Allocated memory at %p\n", 0x394eef e09000Allocated memory at 0x394eef e09000) = 35 
+reallocarray (0x394eef e09000, 500, 4, 0x228a2ce812b8233c, 0x8222f54f8) = 0x394eefe13000 
+printf("Real located with reallocarray to". Reallocated with reallocarray to 0x394eefe13000) = 48 
+free (0x394eef e13000)                                = <void>
++++ exited (status 0) +++ 
+```
+## Пояснення 
