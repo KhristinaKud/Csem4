@@ -24,8 +24,6 @@ int main() {
     } else {
         printf("Reallocated with reallocarray to %p\n", newptr);
     }
-
-    // Звільняємо пам'ять один раз після використання
     free(newptr);
     return 0;
 }
