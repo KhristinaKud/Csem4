@@ -70,12 +70,42 @@ free (0x3df984208008)             = <void>
 # Завдання 4.4
 ## Опис програми 
 Чи є помилки у такому коді?
-void *ptr = NULL;
-while (<some-condition-is-true>) {
-    if (!ptr)
-        ptr = malloc(n);
-    [... <використання 'ptr'> ...]
-    free(ptr);
-}
+ ```text
+  void *ptr = NULL;
+  while (<some-condition-is-true>) {
+      if (!ptr)
+          ptr = malloc(n);
+      [... <використання 'ptr'> ...]
+      free(ptr);
+  }
+  ```
 Напишіть тестовий випадок, який продемонструє проблему та правильний варіант коду.
-
+## Компіляція з проблемою та правильний варіант коду 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr441.c -o Pr441
+kristi @host:~/pr/Pr4 $./Pr441
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr442.c -o Pr442
+kristi @host:~/pr/Pr4 $./Pr442
+```
+## Результат компіляції 
+- Для програми з проблемою вибило попередження, але вона скомпілювалась 
+  ```text
+  Pr441.c:15:9: warning: pointer 'ptr' used after 'free' [-Wuse-after-free] 
+  ```
+  ```text
+Value before free: mam 
+Value after free: mam 
+ptr = 0x61cb6609000 
+Value before free: mam 
+Value after free: mam 
+  ```
+- Правильний код програми
+```text
+ptr = 0x61cb6609000 
+Value before free: mam 
+ptr = 0x61cb6609000 
+Value before free: mam 
+  ```
+## Пояснення 
+У програмі з проблемою, компілятор буде вибивати попередження use-after-free, тобто використання пам'яті після її звільнення. І по хорошому програма, мала не компілюватись. Але компілятор вважає це тільки попередженням. 
+У правильному коді, ми вже після виклику free(), вказівнику ptr встановлюємо Null, щоб програма не робила повторне використання звільненої пам'яті 
