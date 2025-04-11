@@ -165,8 +165,7 @@ Real located with reallocarray to 0x1397e6e13000
 ```text
 Couldn't load ELF object [vdso]: No such file or directory 
 libc start1(1, 0x82117f2d0, 0x82117f2e0, 0x329a1ab80a20, 0x4006c2 <unfinished > 
-calloc(1000, 4) 
-= 0x394eef e09000 
+calloc(1000, 4) = 0x394eef e09000 
 printf("Allocated memory at %p\n", 0x394eef e09000Allocated memory at 0x394eef e09000) = 35 
 reallocarray (0x394eef e09000, 500, 4, 0x228a2ce812b8233c, 0x8222f54f8) = 0x394eefe13000 
 printf("Real located with reallocarray to". Reallocated with reallocarray to 0x394eefe13000) = 48 
@@ -174,3 +173,24 @@ free (0x394eef e13000)                                = <void>
 +++ exited (status 0) +++ 
 ```
 ## Пояснення 
+У ltrace calloc(1000, 4) = 0x394eefe09000 - успішне виділення пам'яті,Далі ми змінюємо розмір виділеної пам'яті на 500 елементів (reallocarray(0x394eefe09000, 500, 4) = 0x394eefe13000
+) і бачимо що reallocarray успішно перемістив блок пам’яті на нову адресу.
+Висновки: Reallocarray — це функція, яка безпечно перевиділяє пам’ять і запобігає переповненню при множенні розмірів. Використовується, коли потрібно виділити пам’ять для масивів великого розміру.
+# Завдання 4.7 Варіант 9
+## Опис програми
+Використайте aligned_alloc для виділення пам’яті з певним вирівнюванням.
+## Компіляція 
+```bash
+kristi @host:~/pr/Pr4 $ gcc -Wall Pr48.c -o Pr48
+kristi @host:~/pr/Pr4 $./Pr48
+```
+## Результати компіляції 
+```text
+Memory allocated at address 0x7dd2aa09000 
+```
+## Пояснення 
+aligned_alloc використовується для виділення пам'яті з конкретним вирівнюванням. Тобто, адреса початку виділеного блоку пам’яті буде кратною певному значенню. Перше значення це є бажане вимірювання, друге значення це розмір блоку пам'яті 
+Переведемо адресу у десяткове число
+0x7dd2aa09000 = 8646484332544 [Джерело](https://www.rapidtables.com/convert/number/hex-to-decimal.html?x=%207DD2AA09000)
+
+Потім поділимо на 16, і вийде в нас число 540 405 270 784, без остачі.Оскільки результат ціле число, адреса кратна 16.
