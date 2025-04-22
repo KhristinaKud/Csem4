@@ -1,3 +1,11 @@
-//
-// Created by User01 on 21.04.2025.
-//
+#include <stdio.h>
+
+void recursiveFunction(int depth) {
+    printf("Recursion depth: %d\n", depth);
+    recursiveFunction(depth + 1);
+}
+
+int main() {
+    recursiveFunction(1);
+    return 0;
+}
