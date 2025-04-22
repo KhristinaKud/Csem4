@@ -7,7 +7,7 @@ int main() {
     while (1) {
         char* ptr = malloc(size);
         if (ptr == NULL) {
-            printf("Memory allocation failed at block %d (approx %lu MB allocated)\n", count, count);
+            printf("Memory allocation failed at block %d \n", count);
             break;
         }
         count++;
