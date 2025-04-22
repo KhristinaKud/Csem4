@@ -151,7 +151,7 @@ Recursion depth: 3897
 Segmentation fault (core dumped)
 ```
 ## Пояснення
-Проста реалізація коду для рекурсію. Встановлюємо ліміт для обмеження max stack segment size. І бачимо Segmentation fault (core dumped)
+Проста реалізація коду для рекурсії. Встановлюємо ліміт для обмеження max stack segment size. І бачимо Segmentation fault (core dumped)
 
 ---
 
