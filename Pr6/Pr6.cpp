@@ -6,7 +6,7 @@ int* get_ptr() {
 }
 int main() {
     int* ptr = get_ptr();
-    stdcout << *ptr;
+    cout << *ptr;
     delete ptr;
     return 0;
 }
