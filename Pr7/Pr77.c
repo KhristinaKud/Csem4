@@ -29,6 +29,9 @@ int main() {
             if (chmod(entry->d_name, st.st_mode | S_IROTH) == -1) {
                 perror("chmod failed");
             }
+            else {
+              printf("Permissions updated\n");
+              }
         }
     }
 
