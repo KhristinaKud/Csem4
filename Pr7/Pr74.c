@@ -1,41 +1,38 @@
 #include <stdio.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <string.h>
+#include <stdlib.h>
 
-void list_files(const char *path) {
-    DIR *dir;
-    struct dirent *entry;
-    struct stat st;
-    char full_path[1024];
+#define LINES 20
 
-    if (!(dir = opendir(path))) {
-        perror(path);
+void view_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("fopen failed");
         return;
     }
-
-    while ((entry = readdir(dir))) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-            continue;
-
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
-        if (stat(full_path, &st) == -1) {
-            perror(full_path);
-            continue;
-        }
-        if (S_ISDIR(st.st_mode)) {
-            list_files(full_path);
-        } else{
-          printf("%s\n", full_path);
+    char line[1024];
+    int line_count = 0;
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+        if (++line_count == LINES) {
+            printf("-- Press Enter to continue --");
+            getchar();
+            line_count = 0;
         }
     }
 
-    closedir(dir);
+    fclose(file);
 }
 
-int main() {
-    printf("Directory and subdirectories:\n");
-    list_files(".");
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file1> [file2]\n", argv[0]);
+        return 1;
+    }
+
+    for (int i = 1; i < argc; i++) {
+        printf("File: %s\n", argv[i]);
+        view_file(argv[i]);
+    }
+
     return 0;
 }

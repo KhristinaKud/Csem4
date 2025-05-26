@@ -1,37 +1,41 @@
 #include <stdio.h>
 #include <dirent.h>
-#include <string.h>
 #include <sys/stat.h>
+#include <string.h>
 
-int main() {
-    DIR *dir = opendir(".");
-    if (!dir) {
-        perror("opendir failed");
-        return 1;
+void list_files(const char *path) {
+    DIR *dir;
+    struct dirent *entry;
+    struct stat st;
+    char full_path[1024];
+
+    if (!(dir = opendir(path))) {
+        perror(path);
+        return;
     }
 
-    struct dirent *entry;
-    char response;
-
     while ((entry = readdir(dir))) {
-        if (strstr(entry->d_name, ".c") == NULL) continue;
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
 
-        printf("File: %s\n", entry->d_name);
-        printf("Grant read permission to others? (y/n): ");
-        scanf(" %c", &response);
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-        if (response == 'y' || response == 'Y') {
-            struct stat st;
-            if (stat(entry->d_name, &st) == -1) {
-                perror("stat failed");
-                continue;
-            }
-            if (chmod(entry->d_name, st.st_mode | S_IROTH) == -1) {
-                perror("chmod failed");
-            }
+        if (stat(full_path, &st) == -1) {
+            perror(full_path);
+            continue;
+        }
+        if (S_ISDIR(st.st_mode)) {
+            list_files(full_path);
+        } else{
+          printf("%s\n", full_path);
         }
     }
 
     closedir(dir);
+}
+
+int main() {
+    printf("Directory:\n");
+    list_files(".");
     return 0;
 }

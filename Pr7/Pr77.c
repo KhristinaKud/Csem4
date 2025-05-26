@@ -1,22 +1,37 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-double rand_0_to_1() {
-    return (double)rand() / RAND_MAX;
-}
-double rand_0_to_n(double n) {
-    return rand_0_to_1() * n;
-}
+#include <dirent.h>
+#include <string.h>
+#include <sys/stat.h>
+
 int main() {
-    srand(time(NULL));
-    printf("0.0 and 1.0:\n");
-    for (int i = 0; i < 5; i++) {
-        printf("%.4f\n", rand_0_to_1());
+    DIR *dir = opendir(".");
+    if (!dir) {
+        perror("opendir failed");
+        return 1;
     }
-    double n = 5.5;
-    printf("\n 0.0 and %.1f:\n", n);
-    for (int i = 0; i < 5; i++) {
-        printf("%.4f\n", rand_0_to_n(n));
+
+    struct dirent *entry;
+    char response;
+
+    while ((entry = readdir(dir))) {
+        if (strstr(entry->d_name, ".c") == NULL) continue;
+
+        printf("File: %s\n", entry->d_name);
+        printf("Grant read permission to others? (y/n): ");
+        scanf(" %c", &response);
+
+        if (response == 'y' || response == 'Y') {
+            struct stat st;
+            if (stat(entry->d_name, &st) == -1) {
+                perror("stat failed");
+                continue;
+            }
+            if (chmod(entry->d_name, st.st_mode | S_IROTH) == -1) {
+                perror("chmod failed");
+            }
+        }
     }
+
+    closedir(dir);
     return 0;
 }
