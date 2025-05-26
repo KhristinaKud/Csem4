@@ -29,7 +29,7 @@ int main() {
         snprintf(command, sizeof(command), "nc -z -w 1 %s %d", target_ip, port);
         int result = system(command);
         if (result == 0) {
-            printf("Порт %d відкритий\n", port);
+            printf("Port %d is open\n", port);
         }
     }
 
