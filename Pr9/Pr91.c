@@ -11,7 +11,6 @@ int main() {
         fprintf(stderr, "Error\n");
         return 1;
     }
-
     FILE *fp = popen("getent passwd", "r");
     if (!fp) {
         fprintf(stderr, "Error\n");
