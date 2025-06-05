@@ -5,7 +5,7 @@
 
 int main() {
     struct passwd *pw;
-    uid_t uid_threshold = 1000;
+    uid_t uid_threshold = 500;
     uid_t current_uid = getuid();
     int found = 0;
     setpwent();
