@@ -18,8 +18,7 @@ int main() {
         return 1;
     }
     char line[MAX_LINE];
-    int user_count = 0;
-    printf("Regular users (UID > 1000), except for the current one (%s, UID: %d):\n"/, current_user->pw_name, current_uid);
+    printf("Regular users (UID > 1000), except for the current one (%s, UID: %d):\n", current_user->pw_name, current_uid);
     while (fgets(line, sizeof(line), fp)) {
         char *username = strtok(line, ":");
         strtok(NULL, ":");
