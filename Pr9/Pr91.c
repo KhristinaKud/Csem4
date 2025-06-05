@@ -1,24 +1,46 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <pwd.h>
+#include <string.h>
 #include <unistd.h>
-
+#include <pwd.h>
+#define MAX_LINE 1024
 int main() {
-    struct passwd *pw;
-    uid_t uid_threshold = 500;
     uid_t current_uid = getuid();
-    int found = 0;
-    setpwent();
-    while ((pw = getpwent()) != NULL) {
-        if (pw->pw_uid >= uid_threshold && pw->pw_uid != current_uid) {
-            printf("Found an user: %s (UID: %d)\n", pw->pw_name, pw->pw_uid);
-            found = 1;
+    struct passwd *current_user = getpwuid(current_uid);
+    if (!current_user) {
+        fprintf(stderr, "Error\n");
+        return 1;
+    }
+
+    FILE *fp = popen("getent passwd", "r");
+    if (!fp) {
+        fprintf(stderr, "Error\n");
+        return 1;
+    }
+    char line[MAX_LINE];
+    int user_count = 0;
+    printf("Regular users (UID > 1000), except for the current one (%s, UID: %d):\n"/, current_user->pw_name, current_uid);
+    while (fgets(line, sizeof(line), fp)) {
+        char *username = strtok(line, ":");
+        strtok(NULL, ":");
+        char *uid_str = strtok(NULL, ":");
+        if (!username || !uid_str) {
+            continue;
+        }
+        uid_t uid = atoi(uid_str);
+
+        if (uid > 1000 && uid != current_uid) {
+            printf("%s (UID: %d)\n", username, uid);
         }
     }
-    endpwent();
 
-    if (!found) {
-        printf("No other users found.\n");
+
+    int status = pclose(fp);
+    if (status == -1) {
+        fprintf(stderr, "Error\n");
+        return 1;
     }
+
+
     return 0;
 }
