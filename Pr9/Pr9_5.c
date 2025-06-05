@@ -30,7 +30,7 @@ int main() {
     fprintf(fp, "Hello user, hello world, mama mama papa papa \n");
     fclose(fp);
 
-    snprintf(cmd, sizeof(cmd), "sudo chown root:root %s", filename);
+    snprintf(cmd, sizeof(cmd), "sudo chown root %s", filename);
     if (system(cmd) != 0) {
         fprintf(stderr, "Error changing owner\n");
         return 1;
