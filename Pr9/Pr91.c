@@ -33,10 +33,13 @@ int main() {
         }
     }
 
+
     int status = pclose(fp);
     if (status == -1) {
         fprintf(stderr, "Error\n");
         return 1;
     }
+
+
     return 0;
 }
