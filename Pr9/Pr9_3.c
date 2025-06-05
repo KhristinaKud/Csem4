@@ -1,46 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 
 int main() {
-    char *filename = "testfile.txt";
-    char *copy_filename = "/tmp/testfile.txt";
-    uid_t user_uid = getuid();
-    char cmd[256];
+    pid_t pid;
+    int fd;
+    const char *filename = "/tmp/testfile";
+    const char *user_home = "/home/user/testfile_copy";
 
-    FILE *fp = fopen(filename, "w");
-    if (fp == NULL) {
-        perror("Error opening file for writing");
-        return 1;
+    fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
     }
-    fprintf(fp, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-    fclose(fp);
+    write(fd, "Mama mia\n", strlen("Mama mia\n"));
+    close(fd);
 
-    snprintf(cmd, sizeof(cmd), "sudo cp %s %s", filename, copy_filename);
-    if (system(cmd) != 0) {
-        fprintf(stderr, "File copy error \n");
-        return 1;
+    printf("Copy file for root\n");
+    if (chmod(filename, 0644) == -1) {
+        perror("Помилка при зміні прав файлу");
     }
-    printf("File copied \n");
-    
-    fp = fopen("testfile_copy.txt", "a");
-    if (fp == NULL) {
-        perror("Error opening file for writing");
-        printf("File modification is not possible due to lack of permissions.\n");
+    if (rename(filename, user_home) == -1) {
+        perror("Error copying file");
+        exit(EXIT_FAILURE);
+    }
+    printf("Change file user \n");
+    fd = open(user_home, O_WRONLY | O_APPEND);
+    if (fd == -1) {
+        perror("Error opening file");
     } else {
-        fprintf(fp, "Added by user\n");
-        fclose(fp);
-        printf("File  successfully\n");
-    }
-    snprintf(cmd, sizeof(cmd), "rm %s", copy_filename);
-    if (system(cmd) != 0) {
-        fprintf(stderr, "File deletion error (\n");
-    } else {
-        printf("File %s successfully deleted\n", copy_filename);
+        if (write(fd, " Hello world\n", strlen(" Hello world\n")) == -1) {
+            perror("Error writing to file");
+        } else {
+            printf("File successfully change\n");
+        }
+        close(fd);
     }
 
+
+    printf("Remove file\n");
+    if (remove(user_home)) {
+        perror("Помилка при видаленні файлу");
+    } else {
+        printf("Файл успішно видалено\n");
+    }
 
     return 0;
 }
