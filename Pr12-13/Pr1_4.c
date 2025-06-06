@@ -6,7 +6,7 @@ void handle_sigint(int sig) {
 }
 void handle_sigterm(int sig) {
     printf("Caught SIGTERM, exiting...\n");
-    exit(0);
+    _exit(0);
 }
 int main() {
     signal(SIGINT, handle_sigint);
