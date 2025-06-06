@@ -1,71 +1,87 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <string.h>
-#include <pwd.h>
+#include <errno.h>
+
+#define ORIGINAL_FILE "original.txt"
+#define COPY_FILE "copy.txt"
 
 int main() {
-    pid_t pid;
-    int fd;
-    const char *filename = "/tmp/testfile";
-    const char *user_home = "/home/user/testfile_copy";
-    struct passwd *pwd;
-
-    // Створення файлу від імені звичайного користувача
-    fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    printf("Creating a file as a regular user...\n");
+    int fd = open(ORIGINAL_FILE, O_CREAT | O_WRONLY, 0644);
     if (fd == -1) {
-        perror("Помилка при відкритті файлу");
-        exit(EXIT_FAILURE);
+        perror("Error creating file");
+        return 1;
     }
-    write(fd, "Mama mia\n", strlen("Mama mia\n"));
+    const char *content = "This is the original file.\n";
+    write(fd, content, strlen(content));
     close(fd);
-
-    printf("Копіювання файлу у домашній каталог користувача\n");
-    if (chmod(filename, 0644) == -1) {
-        perror("Помилка при зміні прав файлу");
-    }
-    if (rename(filename, user_home) == -1) {
-        perror("Помилка при копіюванні файлу");
-        exit(EXIT_FAILURE);
+    printf("File %s created.\n", ORIGINAL_FILE);
+    if (geteuid() != 0) {
+        fprintf(stderr, "This program must be run as root (sudo).\n");
+        return 1;
     }
 
-    // Отримання інформації про звичайного користувача
-    pwd = getpwnam("user"); // Змініть "user" на вашого фактичного користувача
-    if (!pwd) {
-        perror("Помилка при отриманні UID користувача");
-        exit(EXIT_FAILURE);
+    char *home_dir = getenv("HOME");
+    if (!home_dir) {
+        fprintf(stderr, "Failed to get home directory.\n");
+        return 1;
+    }
+    char copy_path[256];
+    snprintf(copy_path, sizeof(copy_path), "%s/%s", home_dir, COPY_FILE);
+
+    printf("Copying file as root to %s...\n", copy_path);
+    FILE *src = fopen(ORIGINAL_FILE, "r");
+    if (!src) {
+        perror("Error opening original file");
+        return 1;
+    }
+    FILE *dst = fopen(copy_path, "w");
+    if (!dst) {
+        perror("Error creating copy file");
+        fclose(src);
+        return 1;
     }
 
-    // Зміна власника файлу на звичайного користувача
-    printf("Зміна власника файлу\n");
-    if (chown(user_home, pwd->pw_uid, pwd->pw_gid) == -1) {
-        perror("Помилка при зміні власника файлу");
-        exit(EXIT_FAILURE);
+    char buffer[1024];
+    size_t bytes;
+    while ((bytes = fread(buffer, 1, sizeof(buffer), src)) > 0) {
+        fwrite(buffer, 1, bytes, dst);
+    }
+    fclose(src);
+    fclose(dst);
+    printf("File copied to %s.\n", copy_path);
+
+    printf("Changing ownership of file %s to root...\n", copy_path);
+    if (chown(copy_path, 0, 0) == -1) {
+        perror("Error changing file ownership");
+        return 1;
     }
 
-    // Зміна файлу звичайним користувачем
-    printf("Зміна файлу користувачем\n");
-    fd = open(user_home, O_WRONLY | O_APPEND);
-    if (fd == -1) {
-        perror("Помилка при відкритті файлу");
+    printf("Attempting to modify file as a regular user...\n");
+    if (seteuid(getuid()) == -1) {
+        perror("Error changing effective UID to regular user");
+        return 1;
+    }
+
+    int fd_copy = open(copy_path, O_WRONLY | O_APPEND);
+    if (fd_copy == -1) {
+        perror("Error: could not open file for writing as a regular user");
     } else {
-        if (write(fd, "Hello world\n", strlen("Hello world\n")) == -1) {
-            perror("Помилка при записі у файл");
-        } else {
-            printf("Файл успішно змінено\n");
-        }
-        close(fd);
+        const char *new_content = "Adding new text.\n";
+        write(fd_copy, new_content, strlen(new_content));
+        close(fd_copy);
+        printf("File successfully modified.\n");
     }
 
-    // Видалення файлу
-    printf("Видалення файлу\n");
-    if (remove(user_home)) {
-        perror("Помилка при видаленні файлу");
+    printf("Attempting to delete file as a regular user...\n");
+    if (unlink(copy_path) == -1) {
+        perror("Error: could not delete file as a regular user");
     } else {
-        printf("Файл успішно видалено\n");
+        printf("File %s successfully deleted.\n", copy_path);
     }
 
     return 0;
