@@ -39,4 +39,7 @@ kristi@host:~$ kldstat | grep audit
 kristi @host:~$ grep auditd_enable /etc/rc.conf 
 auditd enable="YES"
 ```
-І наче програма має працювати, але вона містить 
+І наче програма має працювати, але вона не працює, бо використовується бібліотека яка не застосовується у freeBSD. воно вибиває помилку 
+
+
+ 
