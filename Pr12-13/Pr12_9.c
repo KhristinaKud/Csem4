@@ -24,7 +24,6 @@ void log_signal_info(int pid, int uid, int gid, const char *comm, const char *si
 }
 
 void monitor_audit_log() {
-    // Виклик praudit для конвертації бінарного логу в текст
     char command[256];
     snprintf(command, sizeof(command), "praudit %s", AUDIT_LOG);
 
@@ -36,12 +35,9 @@ void monitor_audit_log() {
 
     char buffer[1024];
     while (fgets(buffer, sizeof(buffer), audit_pipe)) {
-        // Простий аналіз виводу praudit
-        if (strstr(buffer, "kill")) { // Шукаємо події, пов’язані з kill
-            // Приклад парсингу (залежить від формату виводу praudit)
+        if (strstr(buffer, "kill")) {
             int pid = -1, uid = -1, gid = -1, signal = -1;
             char comm[256] = "Unknown";
-            // Парсимо рядок (це приклад, формат потрібно перевірити)
             if (sscanf(buffer, "%*s pid=%d uid=%d gid=%d comm=%255s signal=%d",
                        &pid, &uid, &gid, comm, &signal) >= 4) {
                 char signal_str[32];
@@ -75,7 +71,7 @@ int main() {
 
     while (1) {
         monitor_audit_log();
-        sleep(5); // Період опитування
+        sleep(5);
     }
 
     closelog();
